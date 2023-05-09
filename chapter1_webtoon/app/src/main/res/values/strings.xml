@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">chapter1_webtoon</string>
+    <string name="backToHistory">마지막 시점 돌아가기</string>
+    <string name="changeTabName">탭 이름 변경하기</string>
 </resources>
