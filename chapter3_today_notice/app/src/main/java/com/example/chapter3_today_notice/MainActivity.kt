@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import com.example.chapter3_today_notice.databinding.ActivityMainBinding
+import com.google.gson.Gson
 import okhttp3.*
 import java.io.BufferedReader
 import java.io.IOException
@@ -47,9 +48,11 @@ class MainActivity : AppCompatActivity() {
                     if (response.isSuccessful) {
                         val response = response.body?.string()
 
+                        val message = Gson().fromJson(response, Message::class.java)
+
                         runOnUiThread {
                             binding.informationTextView.isVisible = true
-                            binding.informationTextView.text = response
+                            binding.informationTextView.text = message.message
 
                             binding.serverHostEditText.isVisible = false
                             binding.confirmButton.isVisible = false }
