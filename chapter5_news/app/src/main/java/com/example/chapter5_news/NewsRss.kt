@@ -4,6 +4,12 @@ import com.tickaroo.tikxml.annotation.Element
 import com.tickaroo.tikxml.annotation.PropertyElement
 import com.tickaroo.tikxml.annotation.Xml
 
+@Xml(name = "rss")
+data class NewsRss(
+    @Element(name = "channel")
+    val channel: RssChannel
+)
+
 @Xml(name = "channel")
 data class RssChannel(
     @PropertyElement(name = "title")
