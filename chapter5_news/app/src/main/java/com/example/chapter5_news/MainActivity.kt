@@ -43,6 +43,8 @@ class MainActivity : AppCompatActivity() {
         newsService.mainFeed().enqueue(object : Callback<NewsRss> {
             override fun onResponse(call: Call<NewsRss>, response: Response<NewsRss>) {
                 Log.d("MainActivity", "${response.body()?.channel?.items}")
+
+                newsAdapter.submitList(response.body()?.channel?.items.orEmpty())
             }
 
             override fun onFailure(call: Call<NewsRss>, t: Throwable) {
