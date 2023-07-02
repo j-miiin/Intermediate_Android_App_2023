@@ -57,6 +57,7 @@ class MainActivity : AppCompatActivity() {
                                 node.attr("property") == "og:image"
                             }
 
+                            Log.d("imageUrl", ogImageNode?.attr("content").toString())
                             news.imageUrl = ogImageNode?.attr("content")
                         } catch (e: Exception) {
                             e.printStackTrace()
