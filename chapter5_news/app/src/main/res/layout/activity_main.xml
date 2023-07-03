@@ -22,11 +22,46 @@
             android:paddingEnd="10dp">
 
             <com.google.android.material.chip.Chip
-                android:id="@+id/politicsChip"
+                android:id="@+id/feedChip"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="정치"
-                app:chipIcon="@drawable/ic_baseline_how_to_vote_24" />
+                android:text="피드" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/politicsChip"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="정치" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/economyChip"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="경제" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/socialChip"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="사회" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/itChip"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="IT" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/sportChip"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="스포츠" />
 
         </com.google.android.material.chip.ChipGroup>
 
