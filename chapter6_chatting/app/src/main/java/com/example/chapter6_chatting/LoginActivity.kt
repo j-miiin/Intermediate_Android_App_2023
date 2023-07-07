@@ -5,8 +5,10 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import com.example.chapter6_chatting.Key.Companion.DB_USERS
 import com.example.chapter6_chatting.databinding.ActivityLoginBinding
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 
 class LoginActivity : AppCompatActivity() {
@@ -47,7 +49,17 @@ class LoginActivity : AppCompatActivity() {
             } else {
                 Firebase.auth.signInWithEmailAndPassword(email, password)
                     .addOnCompleteListener(this) { task ->
-                        if (task.isSuccessful) {
+                        val currentUser = Firebase.auth.currentUser
+                        if (task.isSuccessful && currentUser != null) {
+
+                            val userId = currentUser.uid
+
+                            val user = mutableMapOf<String, Any>()
+                            user["userId"] = userId
+                            user["username"] = email
+
+                            Firebase.database.reference.child(DB_USERS).child(userId).updateChildren(user)
+
                             // 로그인 성공
                             val intent = Intent(this, MainActivity::class.java)
                             startActivity(intent)

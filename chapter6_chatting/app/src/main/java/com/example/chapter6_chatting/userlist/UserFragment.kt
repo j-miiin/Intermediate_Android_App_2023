@@ -23,6 +23,8 @@ class UserFragment : Fragment(R.layout.fragment_user) {
             adapter = userListAdapter
         }
 
+        
+
         userListAdapter.submitList(
             mutableListOf<UserItem?>().apply {
                 add(UserItem("11", "22", "33"))
