@@ -10,6 +10,7 @@ import com.example.chapter6_chatting.databinding.ActivityLoginBinding
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.ktx.messaging
 
 class LoginActivity : AppCompatActivity() {
 
@@ -54,16 +55,21 @@ class LoginActivity : AppCompatActivity() {
 
                             val userId = currentUser.uid
 
-                            val user = mutableMapOf<String, Any>()
-                            user["userId"] = userId
-                            user["username"] = email
+                            Firebase.messaging.token.addOnCompleteListener {
+                                val token = it.result
 
-                            Firebase.database.reference.child(DB_USERS).child(userId).updateChildren(user)
+                                val user = mutableMapOf<String, Any>()
+                                user["userId"] = userId
+                                user["username"] = email
+                                user["fcmToken"] = token
 
-                            // 로그인 성공
-                            val intent = Intent(this, MainActivity::class.java)
-                            startActivity(intent)
-                            finish()
+                                Firebase.database.reference.child(DB_USERS).child(userId).updateChildren(user)
+
+                                // 로그인 성공
+                                val intent = Intent(this, MainActivity::class.java)
+                                startActivity(intent)
+                                finish()
+                            }
                         } else {
                             // 로그인 실패
                             Log.e("LoginActivity", task.exception.toString())
