@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.example.chapter7_weather.databinding.ActivityMainBinding
 import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 class MainActivity : AppCompatActivity() {
 
@@ -16,5 +17,7 @@ class MainActivity : AppCompatActivity() {
 
         val retrofit = Retrofit.Builder()
             .baseUrl("http://apis.data.go.kr/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
     }
 }
