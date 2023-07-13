@@ -37,7 +37,7 @@ data class ForecastEntity(
     @SerializedName("baseTime")
     val baseTime: String,
     @SerializedName("category")
-    val category: String,
+    val category: Category?,
     @SerializedName("fcstDate")
     val forecastDate: String,
     @SerializedName("fcstTime")
