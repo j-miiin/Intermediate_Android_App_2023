@@ -26,10 +26,11 @@ class MainActivity : AppCompatActivity() {
 
         val service = retrofit.create(WeatherService::class.java)
 
+        val baseDateTime = BaseDateTime.getBaseDateTime()
         service.getVillageForecast(
             serviceKey = "",
-            baseDate = "20230713",
-            baseTime = "0200",
+            baseDate = baseDateTime.baseDate,
+            baseTime = baseDateTime.baseTime,
             nx = 55,
             ny = 127
         ).enqueue(object : Callback<WeatherEntity> {
@@ -39,7 +40,6 @@ class MainActivity : AppCompatActivity() {
                 val forecastList = response.body()?.response?.body?.items?.forecastEntities.orEmpty()
 
                 for (forecast in forecastList) {
-                    Log.e("Forecast", forecast.toString())
 
                     if (forecastDateTimeMap["${forecast.forecastDate}/${forecast.forecastTime}"] == null) {
                         forecastDateTimeMap["${forecast.forecastDate}/${forecast.forecastTime}"] =
