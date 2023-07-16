@@ -1,9 +1,14 @@
 package com.example.chapter7_weather
 
+import android.Manifest
+import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ActivityCompat
 import com.example.chapter7_weather.databinding.ActivityMainBinding
+import com.google.android.gms.location.LocationServices
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -14,10 +19,40 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
+    val locationPermissionRequest = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permission ->
+        when {
+            permission.getOrDefault(Manifest.permission.ACCESS_COARSE_LOCATION, false) -> {
+
+            }
+            else -> {
+
+            }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        locationPermissionRequest.launch(arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION))
+
+        val fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            locationPermissionRequest.launch(arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION))
+            return
+        }
+
+        fusedLocationClient.lastLocation.addOnSuccessListener {
+            Log.e("lastLocation", it.toString())
+        }
 
         val retrofit = Retrofit.Builder()
             .baseUrl("http://apis.data.go.kr/")
