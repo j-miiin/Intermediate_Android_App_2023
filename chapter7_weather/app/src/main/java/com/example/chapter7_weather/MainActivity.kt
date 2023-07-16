@@ -3,13 +3,14 @@ package com.example.chapter7_weather
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.location.Geocoder
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.example.chapter7_weather.databinding.ActivityMainBinding
 import com.example.chapter7_weather.databinding.ItemForecastBinding
@@ -19,6 +20,8 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.*
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -85,6 +88,23 @@ class MainActivity : AppCompatActivity() {
 
         fusedLocationClient.lastLocation.addOnSuccessListener {
             Log.e("location", it.toString())
+
+            Thread {
+                try {
+                    val addressList = Geocoder(this, Locale.KOREA).getFromLocation(
+                        it.latitude,
+                        it.longitude,
+                        5
+                    )
+
+                    runOnUiThread {
+                        binding.locationTextView.text = addressList?.get(0)?.thoroughfare.orEmpty()
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }.start()
+
             val retrofit = Retrofit.Builder()
                 .baseUrl("http://apis.data.go.kr/")
                 .addConverterFactory(GsonConverterFactory.create())
