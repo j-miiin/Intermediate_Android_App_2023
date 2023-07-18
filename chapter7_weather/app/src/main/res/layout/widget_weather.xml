@@ -6,12 +6,27 @@
     android:gravity="center"
     android:orientation="vertical"
     tools:layout_height="40dp"
-    tools:layout_width="110dp">
+    tools:layout_width="110dp"
+    android:background="@drawable/weather_widget_background">
 
     <TextView
-        android:id="@+id/testTextView"
+        android:id="@+id/temperatureTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="test" />
+        android:text="초기화"
+        android:textColor="@color/white"
+        tools:text="-10"
+        android:fontFamily="@font/nanumgothic"
+        android:textStyle="bold"
+        android:textSize="20sp"/>
+
+    <TextView
+        android:id="@+id/weatherTextView"
+        android:layout_width="wrap_content"
+        android:textColor="@color/white"
+        android:fontFamily="@font/nanumgothic"
+        android:layout_height="wrap_content"
+        android:textSize="10sp"
+        tools:text="맑음" />
 
 </LinearLayout>
