@@ -1,6 +1,9 @@
 package com.example.chapter7_weather
 
 import android.Manifest
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
 import android.appwidget.AppWidgetManager
@@ -10,6 +13,7 @@ import android.content.pm.PackageManager
 import android.os.IBinder
 import android.widget.RemoteViews
 import androidx.core.app.ActivityCompat
+import androidx.core.app.NotificationCompat
 import com.google.android.gms.location.LocationServices
 
 class UpdateWeatherService: Service() {
@@ -19,7 +23,8 @@ class UpdateWeatherService: Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
 
-
+        createChannel()
+        startForeground(1, createNotification())
 
         val appWidgetManager: AppWidgetManager = AppWidgetManager.getInstance(this)
 
@@ -28,6 +33,21 @@ class UpdateWeatherService: Service() {
                 Manifest.permission.ACCESS_BACKGROUND_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
+            val pendingIntent: PendingIntent = Intent(this, SettingActivity::class.java)
+                .let {
+                    PendingIntent.getActivity(this, 2, it, PendingIntent.FLAG_IMMUTABLE)
+                }
+
+            RemoteViews(packageName, R.layout.widget_weather).apply {
+                setTextViewText(R.id.temperatureTextView, "권한없음")
+                setOnClickPendingIntent(R.id.temperatureTextView, pendingIntent)
+                setTextViewText(R.id.weatherTextView, "")
+            }.also { remoteViews ->
+                val appWidgetName = ComponentName(this, WeatherAppWidgetProvider::class.java)
+                appWidgetManager.updateAppWidget(appWidgetName, remoteViews)
+            }
+
+            stopSelf()
 
             return super.onStartCommand(intent, flags, startId)
         }
@@ -62,11 +82,62 @@ class UpdateWeatherService: Service() {
                     stopSelf()
                 },
                 failureCallback = {
+
+                    val pendingServiceIntent: PendingIntent = Intent(this, UpdateWeatherService::class.java)
+                        .let { intent ->
+                            PendingIntent.getService(this, 1, intent, PendingIntent.FLAG_IMMUTABLE)
+                        }
+
+                    RemoteViews(packageName, R.layout.widget_weather).apply {
+                        setTextViewText(
+                            R.id.temperatureTextView,
+                            "오류"
+                        )
+                        setTextViewText(
+                            R.id.weatherTextView,
+                            ""
+                        )
+                        setOnClickPendingIntent(R.id.temperatureTextView, pendingServiceIntent)
+                    }.also { remoteViews ->
+                        val appWidgetName = ComponentName(this, WeatherAppWidgetProvider::class.java)
+                        appWidgetManager.updateAppWidget(appWidgetName, remoteViews)
+                    }
                     stopSelf()
                 }
             )
         }
 
         return super.onStartCommand(intent, flags, startId)
+    }
+
+    private fun createChannel() {
+
+        val channel = NotificationChannel(
+            NOTIFICATION_CHANNEL,
+            "Weather",
+            NotificationManager.IMPORTANCE_LOW
+        )
+
+        channel.description = "위젯 업데이트"
+
+        val manager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+        manager.createNotificationChannel(channel)
+    }
+
+    private fun createNotification(): Notification {
+        return NotificationCompat.Builder(this, NOTIFICATION_CHANNEL)
+            .setSmallIcon(R.drawable.ic_baseline_cloud_24)
+            .setContentTitle("Weather")
+            .setContentText("날씨 업데이트")
+            .build()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        stopForeground(STOP_FOREGROUND_REMOVE)
+    }
+
+    companion object {
+        const val   NOTIFICATION_CHANNEL = "widget_refresh_channel"
     }
 }

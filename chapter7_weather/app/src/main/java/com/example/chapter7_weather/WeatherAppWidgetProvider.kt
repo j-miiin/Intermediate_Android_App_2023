@@ -1,11 +1,14 @@
 package com.example.chapter7_weather
 
+import android.app.ForegroundServiceStartNotAllowedException
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.widget.RemoteViews
+import androidx.core.content.ContextCompat
 
 class WeatherAppWidgetProvider: AppWidgetProvider() {
 
@@ -18,9 +21,9 @@ class WeatherAppWidgetProvider: AppWidgetProvider() {
 
         appWidgetIds.forEach { appWidgetId ->
 
-            val pendingIntent: PendingIntent = Intent(context, MainActivity::class.java)
+            val pendingIntent: PendingIntent = Intent(context, UpdateWeatherService::class.java)
                 .let { intent ->
-                    PendingIntent.getActivity(context, 1, intent, PendingIntent.FLAG_IMMUTABLE)
+                    PendingIntent.getForegroundService(context, 1, intent, PendingIntent.FLAG_IMMUTABLE)
                 }
 
             val views: RemoteViews = RemoteViews(
@@ -31,6 +34,18 @@ class WeatherAppWidgetProvider: AppWidgetProvider() {
             }
 
             appWidgetManager.updateAppWidget(appWidgetId, views)
+        }
+
+        val serviceIntent = Intent(context, UpdateWeatherService::class.java)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            try {
+                ContextCompat.startForegroundService(context, serviceIntent)
+            } catch (e: ForegroundServiceStartNotAllowedException) {
+                e.printStackTrace()
+            }
+        } else {
+            ContextCompat.startForegroundService(context, serviceIntent)
         }
     }
 }
